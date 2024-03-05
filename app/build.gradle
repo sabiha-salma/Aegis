@@ -14,7 +14,7 @@ def getGitHash = { -> return getCmdOutput(["git", "rev-parse", "--short", "HEAD"
 def getGitBranch = { -> return getCmdOutput(["git", "rev-parse", "--abbrev-ref", "HEAD"]) }
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 30
 
     defaultConfig {
         applicationId "com.beemdevelopment.aegis"
@@ -132,3 +132,26 @@ dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
 }
+
+protobuf {
+// Configure the protoc executable
+    protoc {
+        // for apple m1, add protoc_platform=osx-x86_64 in $HOME/.gradle/gradle.properties
+        if (project.hasProperty('protoc_platform')) {
+            artifact = "com.google.protobuf:protoc:3.9.2:${protoc_platform}"
+        } else {
+            artifact = "com.google.protobuf:protoc:3.9.2"
+        }
+    }
+    plugins {
+        javalite {
+            // The codegen for lite comes as a separate artifact
+            if (project.hasProperty('protoc_platform')) {
+                artifact = "com.google.protobuf:protoc-gen-javalite:3.0.0:${protoc_platform}"
+            } else {
+                artifact = "com.google.protobuf:protoc-gen-javalite:3.0.0"
+            }
+        }
+    }
+}
+
